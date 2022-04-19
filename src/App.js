@@ -1,11 +1,15 @@
-import React, {useState,useEffect} from 'react';
-import axios from 'axios';
-import './App.css';
-import NowWeather from './Now-weather/Now-weather';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./App.css";
+import NowWeather from "./Now-weather/Now-weather";
+import Navbar from "./Navbar/Navbar";
 
 function App() {
   return (
-    <NowWeather></NowWeather>
+    <div>
+      <Navbar />
+      <NowWeather />
+    </div>
   );
 }
 
