@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Now-weather.scss";
+import { fetchCurrentWeather } from "../api/weather";
+import {
+  currentLocation,
+  getCurrentPositionWeather,
+  weatherData,
+} from "../api/currentLocation";
 import { Container, Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -20,36 +26,36 @@ const NowWeather = () => {
   const [data, setData] = useState({});
   const [location, setLocation] = useState({});
   const [coordinates, setCoordinates] = useState([]);
-  const [latitud, setLatitud] = useState("");
-  const [longitud, setLongitud] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
   const [sunrise, setSunrise] = useState(0);
   const [sunset, setSunset] = useState(0);
+  const [weatherIcon, setWeatherIcon] = useState();
 
-  //get weather in place searched
-  const getLocation = () => {
-    const urlLocation = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=516d3b7b3be366abe641fbe25b92bbfc`;
-    axios.get(urlLocation).then((res) => {
-      setData(res.data);
-      console.log(res.data);
-    });
+  const getCurrentWeather = async () => {
+    try {
+      const res = await currentLocation();
+      //
+      console.log(res);
+    } catch (err) {
+      console.log(err);
+    }
   };
-
-  //get weather in stockholm
-  const getWeatherData = () => {
-    const urlLocation = `https://api.openweathermap.org/data/2.5/weather?q=stockholm&appid=516d3b7b3be366abe641fbe25b92bbfc`;
-    axios.get(urlLocation).then((res) => {
-      setData(res.data);
-      console.log(res.data);
-    });
-  };
-
+  useEffect(() => {
+    currentLocation();
+   setData(weatherData);
+    console.log(weatherData);
+    /*  const weather = currentLocation();
+    setData(weather); */
+  }, []);
+  
   //form functions
   const handleChange = (e) => {
     setLocation(e.target.value.toLowerCase());
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    getLocation();
+    //getLocation();
   };
 
   //Convert unix timestamp to h/m/s
@@ -65,34 +71,25 @@ const NowWeather = () => {
   };
 
   const displayWeatherIcon = (weatherId) => {
-    switch (weatherId) {
-      case 800:
-        console.log("clear sky");
-        break;
-      case /[801-804]/:
-        console.log("clouds");
-        break;
-      case "clear sky":
-        console.log("rain");
-        break;
-      default:
-        break;
+    if (weatherId == 800) {
+      console.log("clear sky");
+    } else if (weatherId > 800 && weatherId < 805) {
+      console.log("clouds");
+    } else if (weatherId > 299 && weatherId < 532) {
+      console.log("rain");
+    } else if (weatherId > 199 && weatherId < 233) {
+      console.log("Thunderstorm");
     }
   };
-
-  useEffect(() => {
-    getWeatherData();
-  }, []);
 
   useEffect(() => {
     if (data.sys) {
       setSunrise(unix_timeFormatting(data.sys.sunrise));
       setSunset(unix_timeFormatting(data.sys.sunset));
+      displayWeatherIcon(data.weather[0].id);
     }
-    displayWeatherIcon(803);
-    return () => {
-      console.log("cleanup function");
-    };
+
+    return () => {};
   });
 
   return (
@@ -110,16 +107,16 @@ const NowWeather = () => {
         <Row className="bg-dark text-white rounded">
           <Col>
             <h2 className="text-start ">
-              Weather today in {data.name} at 21:00
+              Weather today in {data.timezone} at 21:00
             </h2>
           </Col>
         </Row>
         <Row className="bg-info rounded">
           <Col className="mt-4">
             <Row>
-              {data.main ? (
+              {data.current ? (
                 <h1 className="text-start">
-                  {Math.floor(data.main.temp - 273.15)}°
+                  {Math.floor(data.current.temp - 273.15)}°
                 </h1>
               ) : null}
             </Row>
@@ -137,7 +134,13 @@ const NowWeather = () => {
             </Row>
           </Col>
           <Col className="p-4">
-            <FontAwesomeIcon icon={faSun} className="fa-10x " color="#F3D229" />
+            {data.main ? (
+              <FontAwesomeIcon
+                icon={faSun}
+                className="fa-10x "
+                color="#F3D229"
+              />
+            ) : null}
           </Col>
         </Row>
       </Container>
