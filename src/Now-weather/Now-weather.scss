@@ -1,0 +1,62 @@
+.location {
+  font-size: 2rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+.date {
+  font-size: 1.5rem;
+  font-weight: 300;
+}
+.temperature {
+  font-size: 7rem;
+  margin: 0;
+  font-weight: 500;
+}
+.weather-info {
+  font-size: 1rem;
+  font-weight: 300;
+}
+.sky {
+  font-size: 1.6rem;
+  font-weight: 500;
+}
+
+input {
+  width: 200px;
+  border: 3px solid transparent;
+  border-radius: 5px;
+  padding: 5px;
+  outline: none;
+}
+input:focus {
+  border: 3px solid lightblue;
+}
+
+.button {
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+  background-color: white;
+  border: 0;
+  color: black;
+  transition: 0.5s;
+}
+.button:hover {
+  background-color: lightblue;
+  color: rgb(0, 0, 0);
+}
+.icon {
+  font-size: 1px;
+  margin-top: 2000px;
+}
+
+
+.daily {
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+@media screen and (min-width: 400px) {
+  .weekday {
+  font-size: 1rem;
+}
+}

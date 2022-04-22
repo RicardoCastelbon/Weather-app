@@ -1,5 +1,15 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Raleway:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap");
+
+body {
+  background-image: url(./assets/images/background.jpg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 120vh;
+}
 .App {
   text-align: center;
+  font-family: "Montserrat";
 }
 
 .App-logo {

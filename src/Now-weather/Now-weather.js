@@ -2,53 +2,55 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Now-weather.scss";
 import { fetchCurrentWeather } from "../api/weather";
-import {
-  currentLocation,
-  getCurrentPositionWeather,
-  weatherData,
-} from "../api/currentLocation";
 import { Container, Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSun,
-  faCloudBolt,
-  faCloud,
-  faCloudRain,
-  faSnowflake,
-  faWind,
-  faTemperatureHalf,
-  faDroplet,
-  faEye,
-} from "@fortawesome/free-solid-svg-icons";
+import { faLocationArrow } from "@fortawesome/free-solid-svg-icons";
 import { faCloudSun } from "@fortawesome/free-solid-svg-icons";
 
 const NowWeather = () => {
   const [data, setData] = useState({});
   const [location, setLocation] = useState({});
-  const [coordinates, setCoordinates] = useState([]);
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
   const [sunrise, setSunrise] = useState(0);
   const [sunset, setSunset] = useState(0);
-  const [weatherIcon, setWeatherIcon] = useState();
+  const [date, setDate] = useState("");
+  const [hours, setHours] = useState([]);
 
-  const getCurrentWeather = async () => {
-    try {
-      const res = await currentLocation();
-      //
-      console.log(res);
-    } catch (err) {
-      console.log(err);
+  //GET WEATHER IN ACTUAL LOCATION
+  async function currentLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        const coords = `lat=${latitude}&lon=${longitude}`;
+        getCurrentPositionWeather(coords);
+      });
+    } else {
+      console.log("User rejected permision");
     }
-  };
+  }
+  async function getCurrentPositionWeather(coords) {
+    const urlApi = `https://api.openweathermap.org/data/2.5/onecall?${coords}&exclude=&appid=516d3b7b3be366abe641fbe25b92bbfc`;
+    return axios
+      .get(urlApi)
+      .then((res) => {
+        console.log(res.data);
+        setData(res.data);
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  //unixTotime
+  const unix_convert = (data) => {};
+
   useEffect(() => {
     currentLocation();
-   setData(weatherData);
-    console.log(weatherData);
     /*  const weather = currentLocation();
     setData(weather); */
   }, []);
-  
+
   //form functions
   const handleChange = (e) => {
     setLocation(e.target.value.toLowerCase());
@@ -65,129 +67,197 @@ const NowWeather = () => {
     let hours = date.getHours();
     let minutes = "0" + date.getMinutes();
     let seconds = "0" + date.getSeconds();
-    var formattedTime =
-      hours + ":" + minutes.substr(-2) + ":" + seconds.substr(-2);
+    let formattedTime = hours + ":" + minutes.substr(-2);
     return formattedTime;
   };
-
-  const displayWeatherIcon = (weatherId) => {
-    if (weatherId == 800) {
-      console.log("clear sky");
-    } else if (weatherId > 800 && weatherId < 805) {
-      console.log("clouds");
-    } else if (weatherId > 299 && weatherId < 532) {
-      console.log("rain");
-    } else if (weatherId > 199 && weatherId < 233) {
-      console.log("Thunderstorm");
-    }
+  //Convert unix to day of the week
+  const unix_dateFormatting = (data) => {
+    //let data = data.sys.sunrise;
+    let date = new Date(data * 1000);
+    let days = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
+    let formattedDate = days[date.getDay()];
+    return formattedDate;
   };
 
   useEffect(() => {
-    if (data.sys) {
-      setSunrise(unix_timeFormatting(data.sys.sunrise));
-      setSunset(unix_timeFormatting(data.sys.sunset));
-      displayWeatherIcon(data.weather[0].id);
+    if (data.current) {
+      setSunrise(unix_timeFormatting(data.current.sunrise));
+      setSunset(unix_timeFormatting(data.current.sunset));
+      //displayWeatherIcon(data.weather[0].id);
+    }
+    if (data.daily) {
+      setHours(data.daily);
+      const formated = unix_dateFormatting(data.daily[1].dt);
+      console.log(formated);
     }
 
     return () => {};
   });
-
+  console.log(hours);
   return (
     <div className="App">
-      <h1>Search a location</h1>
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          onChange={handleChange}
-          placeholder="Write a city name"
-        />
-        <button type="submit">Get Location</button>
+        <input type="text" onChange={handleChange} placeholder="Location" />
+        <button className="button" type="submit">
+          Search
+        </button>
       </form>
-      <Container className="mt-3">
-        <Row className="bg-dark text-white rounded">
+
+      <Container className="mt-3 text-white">
+        <Row>
           <Col>
-            <h2 className="text-start ">
-              Weather today in {data.timezone} at 21:00
+            <h2 className="location">
+              <FontAwesomeIcon icon={faLocationArrow} /> {data.timezone}
             </h2>
           </Col>
         </Row>
-        <Row className="bg-info rounded">
-          <Col className="mt-4">
-            <Row>
-              {data.current ? (
-                <h1 className="text-start">
-                  {Math.floor(data.current.temp - 273.15)}°
-                </h1>
-              ) : null}
-            </Row>
-            <Row>
-              {data.main ? (
-                <p className="text-start">{data.weather[0].description}</p>
-              ) : null}
-            </Row>
-            <Row>
-              {data.main ? (
-                <p className="text-start">
-                  Sunrise {sunrise} / Sunset {sunset}
-                </p>
-              ) : null}
-            </Row>
+        <Row>
+          <Col>
+            <h2 className="date">{new Date().toDateString()}</h2>
           </Col>
-          <Col className="p-4">
-            {data.main ? (
-              <FontAwesomeIcon
-                icon={faSun}
-                className="fa-10x "
-                color="#F3D229"
-              />
+        </Row>
+        <Row>
+          <Col>
+            {data.current ? (
+              <h1 className="temperature">
+                {Math.floor(data.current.temp - 273.15)}°C
+              </h1>
             ) : null}
           </Col>
         </Row>
-      </Container>
-
-      <Container className="mt-3 text-start">
-        <Row className="">
-          <Col className="mt-4">
+        <Row>
+          <Col>
+            {data.current ? (
+              <p className="weather-info sky">
+                {data.current.weather[0].description}
+              </p>
+            ) : null}
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            {data.current ? (
+              <p className="weather-info">
+                Sunrise {sunrise} / Sunset {sunset}
+              </p>
+            ) : null}
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            {data.current ? (
+              <p className="weather-info">Humidity {data.current.humidity}%</p>
+            ) : null}
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            {data.current ? (
+              <p className="weather-info">Wind {data.current.wind_speed} m/s</p>
+            ) : null}
+          </Col>
+        </Row>
+        <Row>
+          <Col>
             <Row>
-              <Col>High / Low Temp</Col>
-              <Col>
-                {data.main ? (
-                  <p>
-                    {Math.floor(data.main.temp_max - 273.15)}° /
-                    {Math.floor(data.main.temp_min - 273.15)}°
-                  </p>
-                ) : null}
-              </Col>
+              {data.daily ? (
+                <img
+                  className="icon"
+                  src={`http://openweathermap.org/img/wn/${data.daily[1].weather[0].icon}@2x.png`}
+                  alt=""
+                />
+              ) : null}
             </Row>
             <Row>
-              <Col>Feels like</Col>
-              <Col>
-                {data.main ? (
-                  <p>{Math.floor(data.main.feels_like - 273.15)}°</p>
-                ) : null}
-              </Col>
+              {data.daily ? (
+                <p className="daily">
+                  {Math.floor(data.daily[1].temp.max - 273.15)}/
+                  {Math.floor(data.daily[1].temp.min - 273.15)}°C
+                </p>
+              ) : null}
             </Row>
             <Row>
-              <Col>Humidity</Col>
-              <Col>{data.main ? <p>{data.main.humidity}%</p> : null}</Col>
-            </Row>
-            <Row>
-              <Col>Pressure</Col>
-              <Col>{data.main ? <p>{data.main.pressure} mbar</p> : null}</Col>
+              {data.daily ? (
+                <p className="daily">{unix_dateFormatting(data.daily[1].dt)}</p>
+              ) : null}
             </Row>
           </Col>
-          <Col className="mt-4">
+          <Col>
             <Row>
-              <Col>Visibility</Col>
-              <Col>{data.main ? <p>{data.visibility / 1000} km</p> : null}</Col>
+              {data.daily ? (
+                <img
+                  src={`http://openweathermap.org/img/wn/${data.daily[2].weather[0].icon}@2x.png`}
+                  alt=""
+                />
+              ) : null}
             </Row>
             <Row>
-              <Col>Wind</Col>
-              <Col>{data.main ? <p>{data.wind.speed} m/s</p> : null}</Col>
+              {data.daily ? (
+                <p className="daily">
+                  {Math.floor(data.daily[2].temp.max - 273.15)}/
+                  {Math.floor(data.daily[2].temp.min - 273.15)}°C
+                </p>
+              ) : null}
             </Row>
             <Row>
-              <Col>Clouds</Col>
-              <Col>{data.main ? <p>{data.clouds.all}%</p> : null}</Col>
+              {data.daily ? (
+                <p className="daily">{unix_dateFormatting(data.daily[2].dt)}</p>
+              ) : null}
+            </Row>
+          </Col>
+          <Col>
+            <Row>
+              {data.daily ? (
+                <img
+                  src={`http://openweathermap.org/img/wn/${data.daily[3].weather[0].icon}@2x.png`}
+                  alt=""
+                />
+              ) : null}
+            </Row>
+            <Row>
+              {data.daily ? (
+                <p className="daily">
+                  {Math.floor(data.daily[3].temp.max - 273.15)}/
+                  {Math.floor(data.daily[3].temp.min - 273.15)}°C
+                </p>
+              ) : null}
+            </Row>
+            <Row>
+              {data.daily ? (
+                <p className="daily">{unix_dateFormatting(data.daily[3].dt)}</p>
+              ) : null}
+            </Row>
+          </Col>
+          <Col>
+            <Row>
+              {data.daily ? (
+                <img
+                  src={`http://openweathermap.org/img/wn/${data.daily[4].weather[0].icon}@2x.png`}
+                  alt=""
+                />
+              ) : null}
+            </Row>
+            <Row>
+              {data.daily ? (
+                <p className="daily">
+                  {Math.floor(data.daily[4].temp.max - 273.15)}/
+                  {Math.floor(data.daily[4].temp.min - 273.15)}°C
+                </p>
+              ) : null}
+            </Row>
+            <Row>
+              {data.daily ? (
+                <p className="daily">{unix_dateFormatting(data.daily[4].dt)}</p>
+              ) : null}
             </Row>
           </Col>
         </Row>

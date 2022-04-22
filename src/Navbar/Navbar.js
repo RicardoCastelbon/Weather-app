@@ -11,15 +11,23 @@ import { Button } from "bootstrap";
 
 function NavBar() {
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar bg="transparent"  expand="lg">
       <Container>
-        <Navbar.Brand href="#home">Weather App</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link href="#home">Now</Nav.Link>
-            <Nav.Link href="#link">Hourly</Nav.Link>
-            <Nav.Link href="#link">5-day</Nav.Link>
+        <Navbar.Toggle
+          aria-controls="basic-navbar-nav"
+          className="text-white"
+        />
+        <Navbar.Collapse id="basic-navbar-nav" className="text-white">
+          <Nav className="mx-auto text-white">
+            <Nav.Link href="#home" className="me-5 text-white">
+              Now
+            </Nav.Link>
+            <Nav.Link href="#link" className="me-5 text-white">
+              Hourly
+            </Nav.Link>
+            <Nav.Link href="#link" className="text-white">
+              5-day
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
