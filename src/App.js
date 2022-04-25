@@ -5,13 +5,18 @@ import NowWeather from "./Now-weather/Now-weather";
 import Navbar from "./Navbar/Navbar";
 import HourlyWeather from "./Hourly-weather/Hourly-weather";
 import FiveDayWeather from "./Five-day-weather/Five-day-weather";
+import ErrorPage from "./error-page/Error-page";
+import { Route, Routes } from "react-router-dom";
 function App() {
   return (
     <React.Fragment>
       <Navbar />
-      {/* <NowWeather /> */}
-      {/* <HourlyWeather/>  */}
-      <FiveDayWeather/>
+      <Routes>
+        <Route path="/" element={<NowWeather />} />
+        <Route path="/hourly-weather" element={<HourlyWeather />} />
+        <Route path="/five-day-weather" element={<FiveDayWeather />} />
+        <Route path="*" element={<ErrorPage />}/>
+      </Routes>
     </React.Fragment>
   );
 }

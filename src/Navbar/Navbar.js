@@ -8,26 +8,33 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import Nav from "react-bootstrap/Nav";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Button } from "bootstrap";
+import { Link } from "react-router-dom";
 
 function NavBar() {
   return (
-    <Navbar bg="transparent"  expand="lg">
+    <Navbar bg="transparent" expand="lg">
       <Container>
         <Navbar.Toggle
           aria-controls="basic-navbar-nav"
           className="text-white"
         />
-        <Navbar.Collapse id="basic-navbar-nav" className="text-white">
+        <Navbar.Collapse id="basic-navbar-nav" className="text-white fw-bold ">
           <Nav className="mx-auto text-white">
-            <Nav.Link href="#home" className="me-5 text-white">
+            <Link to="/" className="me-5 text-white text-decoration-none p-2">
               Now
-            </Nav.Link>
-            <Nav.Link href="#link" className="me-5 text-white">
+            </Link>
+            <Link
+              to="/hourly-weather"
+              className="me-5 text-white  text-decoration-none p-2"
+            >
               Hourly
-            </Nav.Link>
-            <Nav.Link href="#link" className="text-white">
+            </Link>
+            <Link
+              to="/five-day-weather"
+              className="me-5 text-white text-decoration-none p-2"
+            >
               5-day
-            </Nav.Link>
+            </Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

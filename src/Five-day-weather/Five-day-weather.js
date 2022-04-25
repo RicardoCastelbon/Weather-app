@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./"
+import "./Five-day-weather.scss";
 import { Container, Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationArrow } from "@fortawesome/free-solid-svg-icons";
@@ -11,7 +11,7 @@ const FiveDayWeather = () => {
   const [sunrise, setSunrise] = useState(0);
   const [sunset, setSunset] = useState(0);
   const [date, setDate] = useState("");
-  const [hours, setHours] = useState([]);
+  const [days, setDays] = useState([]);
 
   const [showMore, setShowMore] = useState(false);
 
@@ -84,6 +84,12 @@ const FiveDayWeather = () => {
     let formattedDate = days[date.getDay()];
     return formattedDate;
   };
+  //Convert unix to day
+  const unix_dayFormating = (data) => {
+    let date = new Date(data * 1000);
+    let day = date.getDate();
+    return day;
+  };
 
   useEffect(() => {
     if (data.current) {
@@ -92,14 +98,12 @@ const FiveDayWeather = () => {
       //displayWeatherIcon(data.weather[0].id);
     }
     if (data.daily) {
-      setHours(data.daily);
+      setDays(data.daily);
       const formated = unix_dateFormatting(data.daily[1].dt);
-      console.log(formated);
     }
-
     return () => {};
   });
-  console.log(hours);
+ 
   return (
     <div className="App">
       <form onSubmit={handleSubmit}>
@@ -166,7 +170,7 @@ const FiveDayWeather = () => {
 
         <Row>
           <Col>
-            <strong>Hour</strong>
+            <strong>Day</strong>
           </Col>
           <Col>
             <strong>Temp</strong>
@@ -181,29 +185,32 @@ const FiveDayWeather = () => {
             <strong>Hum</strong>
           </Col>
         </Row>
-        {data.hourly
-          ? data.hourly.slice(0, 24).map((hour) => {
+        {data.daily
+          ? data.daily.slice(0, 6).map((day,index) => {
               return (
                 <>
                   <Row>
                     <Col className="my-auto">
-                      <p key={hour}>{unix_timeFormatting(hour.dt)}</p>
+                      <p key={index}>{unix_dayFormating(day.dt)}</p>
                     </Col>
                     <Col className="my-auto">
-                      <p key={hour}>{Math.floor(hour.temp - 273.15)}°C</p>
+                      <p key={index}>
+                        {Math.floor(day.temp.max - 273.15)}/
+                        {Math.floor(day.temp.min - 273.15)}°C
+                      </p>
                     </Col>
                     <Col className="my-auto">
                       <img
-                        key={hour}
-                        src={`http://openweathermap.org/img/wn/${hour.weather[0].icon}@2x.png`}
+                        key={index}
+                        src={`http://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`}
                         alt=""
                       />
                     </Col>
                     <Col className="my-auto">
-                      <p key={hour}>{hour.wind_speed}</p>
+                      <p key={index}>{day.wind_speed}</p>
                     </Col>
                     <Col className="my-auto">
-                      <p key={hour}>{hour.humidity}%</p>
+                      <p key={index}>{day.humidity}%</p>
                     </Col>
                   </Row>
                 </>
