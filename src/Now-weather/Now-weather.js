@@ -7,6 +7,29 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationArrow } from "@fortawesome/free-solid-svg-icons";
 import { faCloudSun } from "@fortawesome/free-solid-svg-icons";
 
+//Convert kelvin to farenhait
+ export const kelvinToFarenhait = (data) => {
+    const farenhait = Math.floor(1.8 * (data - 273.15) + 32);
+    return `${farenhait}°F`;
+  };
+  //Convert kelvin to celsius
+  export const kelvinToCelsius = (data) => {
+    const celsius = Math.floor(data - 273.15);
+    return `${celsius}°C`;
+  };
+  //convert min/max kelvin to farenhait
+  export const minMaxKelvinToFarenhait = (minTemp, maxTemp) => {
+    const minFarenhait = Math.floor(1.8 * (minTemp - 273.15) + 32);
+    const maxFarenhait = Math.floor(1.8 * (maxTemp - 273.15) + 32);
+    return `${minFarenhait}/${maxFarenhait}°F`;
+  };
+  //convert min/max kelvin to celsius
+   export const minMaxKelvinToCelsius = (minTemp, maxTemp) => {
+    const minCelsius = Math.floor(minTemp - 273.15);
+    const maxCelsius = Math.floor(maxTemp - 273.15);
+    return `${minCelsius}/${maxCelsius}°C`;
+  };
+
 const NowWeather = () => {
   const [data, setData] = useState({});
   const [location, setLocation] = useState({});
@@ -15,7 +38,7 @@ const NowWeather = () => {
   const [date, setDate] = useState("");
   const [hours, setHours] = useState([]);
   const [toggleDegrees, setToogleDegrees] = useState(true);
-  const [degrees, setDegrees] = useState(0);
+
 
   //GET WEATHER IN ACTUAL LOCATION
   async function currentLocation() {
@@ -84,28 +107,7 @@ const NowWeather = () => {
     let formattedDate = days[date.getDay()];
     return formattedDate;
   };
-  //Convert kelvin to farenhait
-  const kelvinToFarenhait = (data) => {
-    const farenhait = Math.floor(1.8 * (data - 273.15) + 32);
-    return `${farenhait}°F`;
-  };
-  //Convert kelvin to celsius
-  const kelvinToCelsius = (data) => {
-    const celsius = Math.floor(data - 273.15);
-    return `${celsius}°C`;
-  };
-  //convert min/max kelvin to farenhait
-  const minMaxKelvinToFarenhait = (minTemp, maxTemp) => {
-    const minFarenhait = Math.floor(1.8 * (minTemp - 273.15) + 32);
-    const maxFarenhait = Math.floor(1.8 * (maxTemp - 273.15) + 32);
-    return `${minFarenhait}/${maxFarenhait}°F`;
-  };
-  //convert min/max kelvin to celsius
-  const minMaxKelvinToCelsius = (minTemp, maxTemp) => {
-    const minCelsius = Math.floor(minTemp - 273.15);
-    const maxCelsius = Math.floor(maxTemp - 273.15);
-    return `${minCelsius}/${maxCelsius}°C`;
-  };
+  
 
   const degreesToogle = () => {
     setToogleDegrees(!toggleDegrees);
@@ -120,9 +122,6 @@ const NowWeather = () => {
     if (data.daily) {
       setHours(data.daily);
       const formated = unix_dateFormatting(data.daily[1].dt);
-    }
-    if (data.current) {
-      setDegrees(data.current.temp);
     }
     return () => {};
   });
@@ -210,12 +209,12 @@ const NowWeather = () => {
                 <p className="daily">
                   {toggleDegrees
                     ? minMaxKelvinToCelsius(
-                        data.daily[1].temp.min,
-                        data.daily[1].temp.max
+                        data.daily[1].temp.max,
+                        data.daily[1].temp.min
                       )
                     : minMaxKelvinToFarenhait(
-                        data.daily[1].temp.min,
-                        data.daily[1].temp.max
+                        data.daily[1].temp.max,
+                        data.daily[1].temp.min
                       )}
                 </p>
               ) : null}
@@ -240,12 +239,12 @@ const NowWeather = () => {
                 <p className="daily">
                   {toggleDegrees
                     ? minMaxKelvinToCelsius(
-                        data.daily[2].temp.min,
-                        data.daily[2].temp.max
+                        data.daily[2].temp.max,
+                        data.daily[2].temp.min
                       )
                     : minMaxKelvinToFarenhait(
-                        data.daily[2].temp.min,
-                        data.daily[2].temp.max
+                        data.daily[2].temp.max,
+                        data.daily[2].temp.min
                       )}
                 </p>
               ) : null}
@@ -270,12 +269,12 @@ const NowWeather = () => {
                 <p className="daily">
                   {toggleDegrees
                     ? minMaxKelvinToCelsius(
-                        data.daily[3].temp.min,
-                        data.daily[3].temp.max
+                        data.daily[3].temp.max,
+                        data.daily[3].temp.min
                       )
                     : minMaxKelvinToFarenhait(
-                        data.daily[3].temp.min,
-                        data.daily[3].temp.max
+                        data.daily[3].temp.max,
+                        data.daily[3].temp.min
                       )}
                 </p>
               ) : null}
@@ -300,12 +299,12 @@ const NowWeather = () => {
                 <p className="daily">
                   {toggleDegrees
                     ? minMaxKelvinToCelsius(
-                        data.daily[4].temp.min,
-                        data.daily[4].temp.max
+                        data.daily[4].temp.max,
+                        data.daily[4].temp.min
                       )
                     : minMaxKelvinToFarenhait(
-                        data.daily[4].temp.min,
-                        data.daily[4].temp.max
+                        data.daily[4].temp.max,
+                        data.daily[4].temp.min
                       )}
                 </p>
               ) : null}

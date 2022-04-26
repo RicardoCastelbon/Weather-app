@@ -5,6 +5,13 @@ import { Container, Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationArrow } from "@fortawesome/free-solid-svg-icons";
 
+import {
+  kelvinToCelsius,
+  kelvinToFarenhait,
+  minMaxKelvinToFarenhait,
+  minMaxKelvinToCelsius,
+} from "../Now-weather/Now-weather";
+
 const HourlyWeather = () => {
   const [data, setData] = useState({});
   const [location, setLocation] = useState({});
@@ -12,8 +19,9 @@ const HourlyWeather = () => {
   const [sunset, setSunset] = useState(0);
   const [date, setDate] = useState("");
   const [hours, setHours] = useState([]);
+  const [toggleDegrees, setToogleDegrees] = useState(true);
 
-  const [showMore, setShowMore]= useState(false);
+  const [showMore, setShowMore] = useState(false);
 
   //GET WEATHER IN ACTUAL LOCATION
   async function currentLocation() {
@@ -99,15 +107,23 @@ const HourlyWeather = () => {
 
     return () => {};
   });
-  console.log(hours);
+
+  const degreesToogle = () => {
+    setToogleDegrees(!toggleDegrees);
+  };
+
   return (
     <div className="App hourly-weather">
-      <form onSubmit={handleSubmit}>
+      {/*  <form onSubmit={handleSubmit}>
         <input type="text" onChange={handleChange} placeholder="Location" />
         <button className="button" type="submit">
           Search
         </button>
       </form>
+ */}
+      <button className="toggleBtn" onClick={degreesToogle}>
+        Celsius/Farenhait
+      </button>
 
       <Container className="mt-3 text-white">
         <Row>
@@ -126,7 +142,9 @@ const HourlyWeather = () => {
           <Col>
             {data.current ? (
               <h1 className="temperature">
-                {Math.floor(data.current.temp - 273.15)}°C
+                {toggleDegrees
+                  ? kelvinToCelsius(data.current.temp)
+                  : kelvinToFarenhait(data.current.temp)}
               </h1>
             ) : null}
           </Col>
@@ -182,7 +200,7 @@ const HourlyWeather = () => {
           </Col>
         </Row>
         {data.hourly
-          ? data.hourly.slice(0,24).map((hour) => {
+          ? data.hourly.slice(0, 24).map((hour) => {
               return (
                 <>
                   <Row>
@@ -190,7 +208,11 @@ const HourlyWeather = () => {
                       <p key={hour}>{unix_timeFormatting(hour.dt)}</p>
                     </Col>
                     <Col className="my-auto">
-                      <p key={hour}>{Math.floor(hour.temp - 273.15)}°C</p>
+                      <p key={hour}>
+                        {toggleDegrees
+                          ? kelvinToCelsius(hour.temp)
+                          : kelvinToFarenhait(hour.temp)}
+                      </p>
                     </Col>
                     <Col className="my-auto">
                       <img
@@ -210,7 +232,7 @@ const HourlyWeather = () => {
               );
             })
           : null}
-      {/*   <Row>
+        {/*   <Row>
           <Col>
             <button onClick={()=>setShowMore((s)=>!s)}>Show More</button>
           </Col>

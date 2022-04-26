@@ -5,6 +5,13 @@ import { Container, Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationArrow } from "@fortawesome/free-solid-svg-icons";
 
+import {
+  kelvinToCelsius,
+  kelvinToFarenhait,
+  minMaxKelvinToFarenhait,
+  minMaxKelvinToCelsius,
+} from "../Now-weather/Now-weather";
+
 const FiveDayWeather = () => {
   const [data, setData] = useState({});
   const [location, setLocation] = useState({});
@@ -12,8 +19,7 @@ const FiveDayWeather = () => {
   const [sunset, setSunset] = useState(0);
   const [date, setDate] = useState("");
   const [days, setDays] = useState([]);
-
-  const [showMore, setShowMore] = useState(false);
+  const [toggleDegrees, setToogleDegrees] = useState(true);
 
   //GET WEATHER IN ACTUAL LOCATION
   async function currentLocation() {
@@ -103,15 +109,23 @@ const FiveDayWeather = () => {
     }
     return () => {};
   });
- 
+
+  const degreesToogle = () => {
+    setToogleDegrees(!toggleDegrees);
+  };
+
   return (
     <div className="App">
-      <form onSubmit={handleSubmit}>
+      {/* <form onSubmit={handleSubmit}>
         <input type="text" onChange={handleChange} placeholder="Location" />
         <button className="button" type="submit">
           Search
         </button>
-      </form>
+      </form> */}
+
+      <button className="toggleBtn" onClick={degreesToogle}>
+        Celsius/Farenhait
+      </button>
 
       <Container className="mt-3 text-white">
         <Row>
@@ -130,7 +144,9 @@ const FiveDayWeather = () => {
           <Col>
             {data.current ? (
               <h1 className="temperature">
-                {Math.floor(data.current.temp - 273.15)}°C
+                {toggleDegrees
+                  ? kelvinToCelsius(data.current.temp)
+                  : kelvinToFarenhait(data.current.temp)}
               </h1>
             ) : null}
           </Col>
@@ -186,7 +202,7 @@ const FiveDayWeather = () => {
           </Col>
         </Row>
         {data.daily
-          ? data.daily.slice(0, 6).map((day,index) => {
+          ? data.daily.slice(0, 6).map((day, index) => {
               return (
                 <>
                   <Row>
@@ -195,8 +211,9 @@ const FiveDayWeather = () => {
                     </Col>
                     <Col className="my-auto">
                       <p key={index}>
-                        {Math.floor(day.temp.max - 273.15)}/
-                        {Math.floor(day.temp.min - 273.15)}°C
+                        {toggleDegrees
+                          ? minMaxKelvinToCelsius(day.temp.max, day.temp.min)
+                          : minMaxKelvinToFarenhait(day.temp.max, day.temp.min)}
                       </p>
                     </Col>
                     <Col className="my-auto">
