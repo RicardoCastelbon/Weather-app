@@ -101,7 +101,7 @@ const HourlyWeather = () => {
   });
   console.log(hours);
   return (
-    <div className="App">
+    <div className="App hourly-weather">
       <form onSubmit={handleSubmit}>
         <input type="text" onChange={handleChange} placeholder="Location" />
         <button className="button" type="submit">

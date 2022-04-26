@@ -1,3 +1,6 @@
+.now-weather {
+  height: 100vh;
+}
 .location {
   font-size: 2rem;
   font-weight: 500;
@@ -50,13 +53,12 @@ input:focus {
   margin-top: 2000px;
 }
 
-
 .daily {
   font-size: 0.8rem;
   margin-bottom: 0.5rem;
 }
 @media screen and (min-width: 400px) {
   .weekday {
-  font-size: 1rem;
-}
+    font-size: 1rem;
+  }
 }
