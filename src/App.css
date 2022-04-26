@@ -11,6 +11,11 @@ body {
   font-family: "Montserrat";
 }
 
+.toggleBtn{
+  border-radius: 10px;
+  padding: 10px;
+  
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;

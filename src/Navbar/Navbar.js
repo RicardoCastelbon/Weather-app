@@ -9,6 +9,8 @@ import Nav from "react-bootstrap/Nav";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Button } from "bootstrap";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 
 function NavBar() {
   return (
@@ -17,7 +19,9 @@ function NavBar() {
         <Navbar.Toggle
           aria-controls="basic-navbar-nav"
           className="text-white"
-        />
+        >
+          <FontAwesomeIcon icon={faBars} />
+        </Navbar.Toggle>
         <Navbar.Collapse id="basic-navbar-nav" className="text-white fw-bold ">
           <Nav className="mx-auto text-white">
             <Link to="/" className="me-5 text-white text-decoration-none p-2">
