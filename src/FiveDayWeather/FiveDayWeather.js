@@ -1,126 +1,56 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./Hourly-weather.scss";
+import "./FiveDayWeather.scss";
 import { Container, Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationArrow } from "@fortawesome/free-solid-svg-icons";
 
+import { currentLocation } from "../services/locationService";
 import {
   kelvinToCelsius,
   kelvinToFarenhait,
   minMaxKelvinToFarenhait,
   minMaxKelvinToCelsius,
-} from "../Now-weather/Now-weather";
+  unix_dateFormatting,
+  unix_timeFormatting,
+  unix_dayFormating,
+} from "../providers/utilities";
 
-const HourlyWeather = () => {
+const FiveDayWeather = () => {
   const [data, setData] = useState({});
   const [location, setLocation] = useState({});
   const [sunrise, setSunrise] = useState(0);
   const [sunset, setSunset] = useState(0);
   const [date, setDate] = useState("");
-  const [hours, setHours] = useState([]);
+  const [days, setDays] = useState([]);
   const [toggleDegrees, setToogleDegrees] = useState(true);
 
-  const [showMore, setShowMore] = useState(false);
-
-  //GET WEATHER IN ACTUAL LOCATION
-  async function currentLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-        const coords = `lat=${latitude}&lon=${longitude}`;
-        getCurrentPositionWeather(coords);
-      });
-    } else {
-      console.log("User rejected permision");
-    }
-  }
-  async function getCurrentPositionWeather(coords) {
-    const urlApi = `https://api.openweathermap.org/data/2.5/onecall?${coords}&exclude=&appid=516d3b7b3be366abe641fbe25b92bbfc`;
-    return axios
-      .get(urlApi)
-      .then((res) => {
-        console.log(res.data);
-        setData(res.data);
-        return res;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
   useEffect(() => {
-    currentLocation();
-    /*  const weather = currentLocation();
-    setData(weather); */
+    currentLocation(setData);
   }, []);
 
-  //form functions
+  /* form functions
   const handleChange = (e) => {
     setLocation(e.target.value.toLowerCase());
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    //getLocation();
-  };
-
-  //Convert unix timestamp to h/m/s
-  const unix_timeFormatting = (data) => {
-    //let data = data.sys.sunrise;
-    let date = new Date(data * 1000);
-    let hours = date.getHours();
-    let minutes = "0" + date.getMinutes();
-    let seconds = "0" + date.getSeconds();
-    let formattedTime = hours + ":" + minutes.substr(-2);
-    return formattedTime;
-  };
-  //Convert unix to day of the week
-  const unix_dateFormatting = (data) => {
-    //let data = data.sys.sunrise;
-    let date = new Date(data * 1000);
-    let days = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday",
-    ];
-    let formattedDate = days[date.getDay()];
-    return formattedDate;
-  };
-
-  useEffect(() => {
-    if (data.current) {
-      setSunrise(unix_timeFormatting(data.current.sunrise));
-      setSunset(unix_timeFormatting(data.current.sunset));
-      //displayWeatherIcon(data.weather[0].id);
-    }
-    if (data.daily) {
-      setHours(data.daily);
-      const formated = unix_dateFormatting(data.daily[1].dt);
-      console.log(formated);
-    }
-
-    return () => {};
-  });
+   
+  }; */
 
   const degreesToogle = () => {
     setToogleDegrees(!toggleDegrees);
   };
 
   return (
-    <div className="App hourly-weather">
-      {/*  <form onSubmit={handleSubmit}>
+    <div className="App">
+      {/* <form onSubmit={handleSubmit}>
         <input type="text" onChange={handleChange} placeholder="Location" />
         <button className="button" type="submit">
           Search
         </button>
-      </form>
- */}
+      </form> */}
+
       <button className="toggleBtn" onClick={degreesToogle}>
         Celsius/Farenhait
       </button>
@@ -162,7 +92,8 @@ const HourlyWeather = () => {
           <Col>
             {data.current ? (
               <p className="weather-info">
-                Sunrise {sunrise} / Sunset {sunset}
+                Sunrise {unix_timeFormatting(data.current.sunrise)} / Sunset{" "}
+                {unix_timeFormatting(data.current.sunset)}
               </p>
             ) : null}
           </Col>
@@ -184,7 +115,7 @@ const HourlyWeather = () => {
 
         <Row>
           <Col>
-            <strong>Hour</strong>
+            <strong>Day</strong>
           </Col>
           <Col>
             <strong>Temp</strong>
@@ -199,33 +130,33 @@ const HourlyWeather = () => {
             <strong>Hum</strong>
           </Col>
         </Row>
-        {data.hourly
-          ? data.hourly.slice(0, 24).map((hour) => {
+        {data.daily
+          ? data.daily.slice(0, 6).map((day, index) => {
               return (
                 <>
                   <Row>
                     <Col className="my-auto">
-                      <p key={hour}>{unix_timeFormatting(hour.dt)}</p>
+                      <p key={index}>{unix_dayFormating(day.dt)}</p>
                     </Col>
                     <Col className="my-auto">
-                      <p key={hour}>
+                      <p key={index}>
                         {toggleDegrees
-                          ? kelvinToCelsius(hour.temp)
-                          : kelvinToFarenhait(hour.temp)}
+                          ? minMaxKelvinToCelsius(day.temp.max, day.temp.min)
+                          : minMaxKelvinToFarenhait(day.temp.max, day.temp.min)}
                       </p>
                     </Col>
                     <Col className="my-auto">
                       <img
-                        key={hour}
-                        src={`http://openweathermap.org/img/wn/${hour.weather[0].icon}@2x.png`}
+                        key={index}
+                        src={`http://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`}
                         alt=""
                       />
                     </Col>
                     <Col className="my-auto">
-                      <p key={hour}>{hour.wind_speed}</p>
+                      <p key={index}>{day.wind_speed}</p>
                     </Col>
                     <Col className="my-auto">
-                      <p key={hour}>{hour.humidity}%</p>
+                      <p key={index}>{day.humidity}%</p>
                     </Col>
                   </Row>
                 </>
@@ -242,4 +173,4 @@ const HourlyWeather = () => {
   );
 };
 
-export default HourlyWeather;
+export default FiveDayWeather;

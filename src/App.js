@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
-import NowWeather from "./Now-weather/Now-weather";
+import NowWeather from "./NowWeather/NowWeather";
 import Navbar from "./Navbar/Navbar";
-import HourlyWeather from "./Hourly-weather/Hourly-weather";
-import FiveDayWeather from "./Five-day-weather/Five-day-weather";
+import HourlyWeather from "./HourlyWeather/HourlyWeather";
+import FiveDayWeather from "./FiveDayWeather/FiveDayWeather";
 import ErrorPage from "./error-page/Error-page";
 import { Route, Routes } from "react-router-dom";
 function App() {
