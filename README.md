@@ -13,7 +13,7 @@
 ## Installation
 To execute the project it necesssary to execute:
 * npm install to get all the deppendencies
-* npm run start to strat the development server
+* npm run start to start the development server
 
 
 
