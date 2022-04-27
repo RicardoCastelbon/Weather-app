@@ -2,12 +2,16 @@
 
 ## Features
 * Weather in your current location and time
-* 
+* Weather hourly
+* Weather 5 days head
+
+## Project Development & Structure
+* The project consist in 3 main pages where we can see the weather in our currrent location and time, hourly and five days ahead. 
+* The is a services folder where is the data fetching and a utilities folder where are all kind of unit conversion functions. 
+* The Api used to fetch the weather data is https://openweathermap.org/api
 
 
-### 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+
 
 
