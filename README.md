@@ -10,6 +10,11 @@
 * The is a services folder where is the data fetching and a utilities folder where are all kind of unit conversion functions. 
 * The Api used to fetch the weather data is https://openweathermap.org/api
 
+## Installation
+To execute the project it necesssary to execute:
+* npm install to get all the deppendencies
+* npm run start to strat the development server
+
 
 
 
